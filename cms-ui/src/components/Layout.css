@@ -1,0 +1,12 @@
+.sortable{
+    cursor: pointer;
+}
+
+.sortable:hover{
+    opacity: 0.85;
+}
+
+.img-sm{
+    width: auto;
+    max-height: 50px;
+}

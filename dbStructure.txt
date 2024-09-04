@@ -1,0 +1,83 @@
+users
+-name
+-email
+-password
+-phone
+-address
+-type 
+      -Admin,
+      - staff,
+      - customer 
+status (if true active if false inactive)
+
+
+
+categories-
+-name
+-status
+
+brands
+-name
+-status
+
+
+products
+-name
+-description
+-summary
+-price
+-discountedPrice
+-images
+-categoryId
+-brandId
+-status
+-featured (true, false)
+
+
+reviews
+-comment
+-rating
+-userid
+-productId
+
+
+orders
+-userId 
+-status
+    -processing
+    -confirmed
+    -shipping
+    -delivered
+    -cancelled
+
+
+order_details
+-orderId 
+-productId 
+-price 
+-qty
+-total
+
+
+
+
+
+ destroy = async(req, res, next) =>{
+    try {
+      const product = await Product.findById(req.params.id)
+      if(product){
+
+        for(let image of product.images){
+           unlinkSync(`uploads/${image}`)
+        }
+
+        await Product.findByIdAndDelete(req.params.id);
+        res.send({ message: "product deleted successfully." });
+      }else{
+        return notFoundError("product", next)
+      }
+    } catch (error) {
+      console.log(error)
+      errorMsg(error, next);
+    }
+  }

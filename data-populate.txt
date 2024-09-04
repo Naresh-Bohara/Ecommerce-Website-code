@@ -1,0 +1,660 @@
+front-product.jsx
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import http from "@/http";
+import { Loading, ProductSection } from "@/components";
+import { imgUrl } from "@/lib";
+
+export const Product = () => {
+    const [product, setProduct] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [similars, setSimilars] = useState([]);
+    const [bigImg, setBigImg] = useState('');
+    const [rating, setRating] = useState(1); // Add state for rating
+
+    const params = useParams();
+
+    useEffect(() => {
+        loadProduct();
+    }, [params.id]);
+
+    const loadProduct = () => {
+        setLoading(true);
+
+        Promise.all([
+            http.get(`/products/${params.id}`),
+            http.get(`/products/${params.id}/similar`)
+        ])
+            .then(([{ data: prod }, { data: simList }]) => {
+                setProduct(prod);
+                setSimilars(simList);
+                setBigImg(prod?.images[0]);
+            })
+            .catch(() => { })
+            .finally(() => setLoading(false));
+    };
+
+    return loading ? <Loading /> : <div className="col-12">
+        <main className="row">
+            <div className="col-12 bg-white py-3 my-3">
+                <div className="row">
+
+                    <div className="col-lg-5 col-md-12 mb-3">
+                        <div className="col-12 mb-3">
+                            <div className="img-large border" style={{ backgroundImage: `url('${imgUrl(bigImg)}')` }}></div>
+                        </div>
+                        <div className="col-12">
+                            <div className="row">
+                                {product?.images?.map((image, i) => <div className="col-sm-2 col-3" key={i} onMouseEnter={() => setBigImg(image)} onClick={() => setBigImg(image)}>
+                                    <div className="img-small border"
+                                        style={{ backgroundImage: `url('${imgUrl(image)}')` }}
+                                        data-src="images/image-1.jpg"></div>
+                                </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-5 col-md-9">
+                        <div className="col-12 product-name large">
+                            {product.name}
+                            <small>By <Link to={`/brands/${product.brandId}`}>{product?.brand?.name}</Link></small>
+                        </div>
+                        <div className="col-12 px-0">
+                            <hr />
+                        </div>
+                        <div className="col-12">
+                            {product.summary}
+                        </div>
+                    </div>
+
+                    <div className="col-lg-2 col-md-3 text-center">
+                        <div className="col-12 sidebar h-100">
+                            <div className="row">
+                                <div className="col-12">
+                                    <div className="col-12">
+                                        {product?.discountedPrice > 0 ? (
+                                            <>
+                                                <span className="detail-price">
+                                                    {product.discountedPrice?.toLocaleString("en-NP")}
+                                                </span>
+                                                <span className="detail-price-old">
+                                                    {product.price?.toLocaleString("en-NP")}
+                                                </span>
+                                            </>
+
+                                        ) : (
+                                            <span className="detail-price">
+                                                {product.price?.toLocaleString("en-NP")}
+                                            </span>
+                                        )}
+                                    </div>
+
+                                </div>
+                                <div className="col-xl-5 col-md-9 col-sm-3 col-5 mx-auto mt-3">
+                                    <div className="mb-3">
+                                        <label htmlFor="qty">Quantity</label>
+                                        <input type="number" id="qty" min="1" defaultValue="1" className="form-control" required />
+                                    </div>
+                                </div>
+                                <div className="col-12 mt-3">
+                                    <button className="btn btn-outline-dark" type="button"><i className="fas fa-cart-plus me-2"></i>Add to cart</button>
+                                </div>
+                                <div className="col-12 mt-3">
+                                    <button className="btn btn-outline-secondary btn-sm" type="button"><i className="fas fa-heart me-2"></i>Add to wishlist</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div className="col-12 mb-3 py-3 bg-white text-justify">
+                <div className="row">
+
+                    <div className="col-md-7">
+                        <div className="col-12">
+                            <div className="row">
+                                <div className="col-12 text-uppercase">
+                                    <h2><u>Details</u></h2>
+                                </div>
+                                <div className="col-12" id="details">
+                                    {product.description}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-md-5">
+                        <div className="col-12 px-md-4 sidebar h-100">
+
+                            <div className="row">
+                                <div className="col-12 mt-md-0 mt-3 text-uppercase">
+                                    <h2><u>Ratings & Reviews</u></h2>
+                                </div>
+                                <div className="col-12">
+                                    <div className="row">
+                                        <div className="col-sm-4 text-center">
+                                            <div className="row">
+                                                <div className="col-12 average-rating">
+                                                    4.1
+                                                </div>
+                                                <div className="col-12">
+                                                    of 100 reviews
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <ul className="rating-list mt-3">
+                                                <li>
+                                                    <div className="progress">
+                                                        <div className="progress-bar bg-dark" role="progressbar" style={{ width: `45%` }} aria-valuenow="45" aria-valuemin="0" aria-valuemax="100">45%</div>
+                                                    </div>
+                                                    <div className="rating-progress-label">
+                                                        5<i className="fas fa-star ms-1"></i>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div className="progress">
+                                                        <div className="progress-bar bg-dark" role="progressbar" style={{ width: `30%` }} aria-valuenow="30" aria-valuemin="0" aria-valuemax="100">30%</div>
+                                                    </div>
+                                                    <div className="rating-progress-label">
+                                                        4<i className="fas fa-star ms-1"></i>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div className="progress">
+                                                        <div className="progress-bar bg-dark" role="progressbar" style={{ width: `15%` }} aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">15%</div>
+                                                    </div>
+                                                    <div className="rating-progress-label">
+                                                        3<i className="fas fa-star ms-1"></i>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div className="progress">
+                                                        <div className="progress-bar bg-dark" role="progressbar" style={{ width: `7%` }} aria-valuenow="7" aria-valuemin="0" aria-valuemax="100">7%</div>
+                                                    </div>
+                                                    <div className="rating-progress-label">
+                                                        2<i className="fas fa-star ms-1"></i>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div className="progress">
+                                                        <div className="progress-bar bg-dark" role="progressbar" style={{ width: `3%` }} aria-valuenow="3" aria-valuemin="3" aria-valuemax="100">3%</div>
+                                                    </div>
+                                                    <div className="rating-progress-label">
+                                                        1<i className="fas fa-star ms-1"></i>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-12 px-md-3 px-0">
+                                    <hr />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-12">
+                                    <h4>Add Review</h4>
+                                </div>
+                                <div className="col-12">
+                                    <form>
+                                        <div className="mb-3">
+                                            <textarea className="form-control" placeholder="Give your review"></textarea>
+                                        </div>
+                                        <div className="mb-3">
+                                            <div className="d-flex ratings justify-content-end flex-row-reverse">
+                                                <input type="radio" value="5" name="rating" id="rating-5" onChange={(e) => setRating(e.target.value)} /><label htmlFor="rating-5"></label>
+                                                <input type="radio" value="4" name="rating" id="rating-4" onChange={(e) => setRating(e.target.value)} /><label htmlFor="rating-4"></label>
+                                                <input type="radio" value="3" name="rating" id="rating-3" onChange={(e) => setRating(e.target.value)} /><label htmlFor="rating-3"></label>
+                                                <input type="radio" value="2" name="rating" id="rating-2" onChange={(e) => setRating(e.target.value)} /><label htmlFor="rating-2"></label>
+                                                <input type="radio" value="1" name="rating" id="rating-1" checked={rating === 1} onChange={(e) => setRating(e.target.value)} /><label htmlFor="rating-1"></label>
+                                            </div>
+                                        </div>
+                                        <div className="mb-3">
+                                            <button className="btn btn-outline-dark">Add Review</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-12 px-md-3 px-0">
+                                    <hr />
+                                </div>
+                            </div>
+
+                            <div className="row">
+                                <div className="col-12">
+
+                                    <div className="col-12 text-justify py-2 px-3 mb-3 bg-gray">
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <strong className="me-2">Steve Rogers</strong>
+                                                <small>
+                                                    <i className="fas fa-star"></i>
+                                                    <i className="fas fa-star"></i>
+                                                    <i className="fas fa-star"></i>
+                                                    <i className="far fa-star"></i>
+                                                    <i className="far fa-star"></i>
+                                                </small>
+                                            </div>
+                                            <div className="col-12">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut ullamcorper quam, non congue odio.
+                                                <br />
+                                                Fusce ligula augue, faucibus sed neque non, auctor rhoncus enim. Sed nec molestie turpis. Nullam accumsan porttitor rutrum. Curabitur eleifend venenatis volutpat.
+                                                <br />
+                                                Aenean faucibus posuere vehicula.
+                                            </div>
+                                            <div className="col-12">
+                                                <small>
+                                                    <i className="fas fa-clock me-2"></i>5 hours ago
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="col-12 text-justify py-2 px-3 mb-3 bg-gray">
+                                        <div className="row">
+                                            <div className="col-12">
+                                                <strong className="me-2">Bucky Barns</strong>
+                                                <small>
+                                                    <i className="fas fa-star"></i>
+                                                    <i className="fas fa-star"></i>
+                                                    <i className="far fa-star"></i>
+                                                    <i className="far fa-star"></i>
+                                                    <i className="far fa-star"></i>
+                                                </small>
+                                            </div>
+                                            <div className="col-12">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ut ullamcorper quam, non congue odio.
+                                                <br />
+                                                Aenean faucibus posuere vehicula.
+                                            </div>
+                                            <div className="col-12">
+                                                <small>
+                                                    <i className="fas fa-clock me-2"></i>5 hours ago
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            {similars && similars.length > 0 && <ProductSection products={similars} title="Similar Products" />}
+
+
+        </main>
+    </div>
+}
+
+
+
+
+
+
+
+
+
+
+//5/15
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Col, Form, Pagination, Row, Table } from "react-bootstrap";
+
+export const DataTable = ({ data = [], searchable = [], sortable = [] }) => {
+  const [term, setTerm] = useState('');
+  const [filtered, setFiltered] = useState([]);
+  const [sortBy, setSortBy] = useState('');
+  const [direction, setDirection] = useState('asc');
+  const [perPage, setPerPage] = useState(10);
+  const [current, setCurrent] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [offset, setOffset] = useState(0);
+  const [paginated, setPaginated] = useState([]);
+  const [pageLinks, setPageLinks] = useState([]);
+
+  useEffect(() => {
+    if (term.length > 0) {
+      let temp = data.filter(item => {
+        for (let k of searchable) {
+          if (item[k].toLowerCase().includes(term.toLowerCase())) {
+            return true;
+          }
+        }
+        return false;
+      });
+      setFiltered(temp);
+    } else {
+      setFiltered(data);
+    }
+    setCurrent(1);
+    setSortBy('');
+    setDirection('asc');
+  }, [term, data, searchable]);
+
+  useEffect(() => {
+    if (sortBy.length > 0) {
+      setFiltered(prevFiltered => {
+        let temp = [...prevFiltered].sort((a, b) => {
+          if (typeof a[sortBy] === "number" && typeof b[sortBy] === "number") {
+            return b[sortBy] - a[sortBy];
+          } else {
+            let x = parseFloat(a[sortBy]), y = parseFloat(b[sortBy]);
+            if (isNaN(x) || isNaN(y)) {
+              if (dayjs(a[sortBy]).isValid() && dayjs(b[sortBy]).isValid()) {
+                x = dayjs(a[sortBy]).toDate();
+              } else {
+                x = `${a[sortBy]}`.toLowerCase();
+                y = `${b[sortBy]}`.toLowerCase();
+                if (x < y) { return -1; }
+                if (x > y) { return 1; }
+                return 0;
+              }
+            } else {
+              return y - x;
+            }
+          }
+        });
+
+        if (direction === 'desc') {
+          temp.reverse();
+        }
+
+        setCurrent(1); 
+        return temp;
+      });
+    }
+  }, [sortBy, direction, setCurrent]);
+
+  useEffect(() => {
+    let temp = (current - 1) * perPage;
+    setOffset(temp);
+  }, [current, perPage]);
+
+  useEffect(() => {
+    let temp = Math.ceil(filtered.length / perPage);
+    setPages(temp);
+    // Reset current page if the number of pages changes
+    if (current > temp) {
+      setCurrent(1);
+    }
+  }, [perPage, filtered, current]);
+
+  useEffect(() => {
+    let temp = [...filtered].splice(offset, perPage);
+    setPaginated(temp);
+  }, [offset, filtered, perPage]);
+
+  useEffect(() => {
+    let temp = [];
+
+    for (let i = 1; i <= pages; i++) {
+      temp.push(
+        <Pagination.Item key={i} active={i === current} onClick={() => setCurrent(i)}>
+          {i}
+        </Pagination.Item>
+      );
+    }
+
+    setPageLinks(temp);
+  }, [pages, current]);
+
+  const handleSort = k => {
+    if (sortable.includes(k)) {
+      if (k === sortBy) {
+        setDirection(direction === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortBy(k);
+        setDirection('asc');
+      }
+    }
+  };
+
+  return (
+    <Row>
+      <Col xs={12}>
+        <Row>
+          <Col md={2} className="mb-3">
+            <Form.Label htmlFor="perPage">Per Page</Form.Label>
+            <Form.Select name="perPage" id="perPage" value={perPage} onChange={({ target }) => setPerPage(parseInt(target.value))}>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </Form.Select>
+          </Col>
+          {searchable.length > 0 &&
+            <Col md={4} xl={3} className="mb-3 ms-auto">
+              <Form.Control type="search" name="term" id="term" placeholder="Search..." onChange={({ target }) => setTerm(target.value)} value={term} />
+            </Col>
+          }
+        </Row>
+      </Col>
+      <Col xs={12}>
+        {
+          filtered.length > 0 ?
+            <Table size="sm" striped hover bordered>
+              <thead className="table-dark">
+                <tr>
+                  {Object.keys(data[0]).map((k, i) =>
+                    <th key={i} className={sortable.includes(k) ? 'sortable' : ''} onClick={() => handleSort(k)}>
+                      {k} {sortBy === k && <i className={`fa-solid fa-chevron-${direction === 'asc' ? 'up' : 'down'} ms-3`}></i>}
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {paginated.map((item, i) =>
+                  <tr key={i}>
+                    {Object.keys(item).map((k, j) =>
+                      <td key={j}>{item[k]}</td>
+                    )}
+                  </tr>
+                )}
+              </tbody>
+            </Table> :
+            <h4 className="text-muted">No data found.</h4>
+        }
+        {pages > 1 &&
+          <Row>
+            <Col className="text-muted fst-italic">
+              Showing {offset + 1} to {Math.min(current * perPage, filtered.length)} on page {current} of {pages}
+
+            </Col>
+            <Col xs="auto" className="ms-auto">
+              <Pagination>
+                <Pagination.Prev disabled={current === 1} onClick={() => setCurrent(current - 1)} />
+                {pageLinks.map(item => item)}
+                <Pagination.Next disabled={current === pages} onClick={() => setCurrent(current + 1)} />
+              </Pagination>
+            </Col>
+          </Row>
+        }
+      </Col>
+    </Row>
+  );
+}
+
+
+
+
+onSubmit: (values, { setSubmitting }) => {
+     let fd = new FormData
+
+     for(let k in values){
+      if(k == 'images'){
+        for(let img of values[k]){
+         fd.append(k, img)
+        }
+      }else{
+         fd.append(k, values[k])
+      }
+     }
+
+      http.post("/cms/products", fd, {
+         headers:{
+            "Content-Type":"multipart/form-data"
+           }
+        })
+        .then(() => navigate("/products"))
+        .catch(({ response }) => setValidationError(formik, response))
+        .finally(() => setSubmitting(false))
+    }
+
+
+
+
+onSubmit: (values, { setSubmitting }) => {
+     let fd = new FormData
+
+     for(let k in values){
+      if(k == 'images'){
+        for(let img of values[k]){
+         fd.append(k, img)
+        }
+      }else{
+         fd.append(k, values[k])
+      }
+     }
+
+      http.post("/cms/products", fd, {
+         headers:{
+            "Content-Type":"multipart/"
+         }
+      })
+        .then(() => navigate("/products"))
+        .catch(({ response }) => setValidationError(formik, response))
+        .finally(() => setSubmitting(false))
+        
+
+
+
+
+
+
+
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { Col, Form, Row, Table } from "react-bootstrap";
+
+export const DataTable = ({ data = [], searchable = [], sortable = [] }) => {
+  const [term, setTerm] = useState('');
+  const [filtered, setFiltered] = useState([]);
+  const [sortBy, setSortBy] = useState('');
+  const [direction, setDirection] = useState('asc');
+
+  useEffect(() => {
+    filterData();
+  }, [term, data]);
+
+  useEffect(() => {
+    sortData();
+  }, [sortBy, direction]);
+
+  const filterData = () => {
+    if (term.length > 0) {
+      const temp = data.filter(item =>
+        searchable.some(key => item[key].toLowerCase().includes(term.toLowerCase()))
+      );
+      setFiltered(temp);
+    } else {
+      setFiltered(data);
+    }
+  };
+
+  const sortData = () => {
+    if (sortBy.length > 0 && sortable.includes(sortBy)) {
+      const sortedData = [...filtered].sort((a, b) => {
+        const aValue = getSortableValue(a[sortBy]);
+        const bValue = getSortableValue(b[sortBy]);
+
+        if (direction === 'asc') {
+          return aValue.localeCompare(bValue);
+        } else {
+          return bValue.localeCompare(aValue);
+        }
+      });
+      setFiltered(sortedData);
+    }
+  };
+
+  const getSortableValue = value => {
+    if (typeof value === 'number') {
+      return value.toString();
+    } else if (dayjs(value).isValid()) {
+      return dayjs(value).format();
+    } else {
+      return value.toLowerCase();
+    }
+  };
+
+  const handleSort = key => {
+    if (sortable.includes(key)) {
+      if (key === sortBy) {
+        setDirection(direction === 'asc' ? 'desc' : 'asc');
+      } else {
+        setSortBy(key);
+        setDirection('asc');
+      }
+    }
+  };
+
+  return (
+    <Row>
+      <Col xs={12}>
+        <Row>
+          {searchable.length > 0 &&
+            <Col md={4} xl={3} className="mb-3 ms-auto">
+              <Form.Control type="search" name="term" id="term" placeholder="Search..."
+                onChange={({ target }) => setTerm(target.value)} value={term} />
+            </Col>
+          }
+        </Row>
+      </Col>
+      <Col xs={12}>
+        {
+          filtered.length > 0 ?
+            <Table size="sm" striped hover bordered>
+              <thead className="table-dark">
+                <tr>
+                  {Object.keys(data[0]).map((key, index) =>
+                    <th key={index} className={sortable.includes(key) ? 'sortable' : ''} onClick={() => handleSort(key)}>
+                      {key} {sortBy === key && <i className={`fa-solid fa-chevron-${direction === 'asc' ? 'up' : 'down'} ms-3`}></i>}
+                    </th>
+                  )}
+                </tr>
+              </thead>
+
+              <tbody>
+                {filtered.map((item, index) =>
+                  <tr key={index}>
+                    {Object.values(item).map((value, idx) =>
+                      <td key={idx}>{value}</td>
+                    )}
+                  </tr>
+                )}
+              </tbody>
+            </Table> :
+            <h4 className="text-muted">No data found.</h4>
+        }
+
+      </Col>
+    </Row>
+  );
+};
