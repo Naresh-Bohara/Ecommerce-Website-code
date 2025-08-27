@@ -18,7 +18,9 @@ export const CmsMenu = ()=>{
 
     return user && <Navbar bg="dark" data-bs-theme="dark" expand="lg">
         <Container>
-          <Link to="/" className="navbar-brand">NepBazar</Link>
+         <Link to="/" className="navbar-brand fw-bold fw-sm ">
+  FarwestTechStore
+</Link>
           <Navbar.Toggle/>
           <Navbar.Collapse>
             <Nav className="me-auto">

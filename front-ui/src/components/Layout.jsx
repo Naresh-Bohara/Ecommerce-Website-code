@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./Layout.css";
+import logo from "../../public/logo.jpg"
 
 export const Layout = () => {
   const user = useSelector(state => state.user.value);
@@ -96,13 +97,13 @@ export const Layout = () => {
                   <div className="col-auto me-auto">
                     <ul className="top-nav">
                       <li>
-                        <a href="tel:+977-9864755254">
-                          <i className="fa fa-phone-square me-2"></i>+977-9864755254
+                        <a href="tel:+977-9822685370">
+                          <i className="fa fa-phone-square me-2"></i>+977-9822685370
                         </a>
                       </li>
                       <li>
-                        <a href="mailto:nareshbohara0533@gmail.com">
-                          <i className="fa fa-envelope me-2"></i>nareshbohara0533@gmail.com
+                        <a href="mailto:bhattasantosh855@gmail.com">
+                          <i className="fa fa-envelope me-2"></i>bhattasantosh855@gmail.com
                         </a>
                       </li>
                     </ul>
@@ -143,7 +144,10 @@ export const Layout = () => {
                 <div className="row">
                   <div className="col-lg-auto">
                     <div className="site-logo text-center text-lg-left">
-                      <Link to="/">NepBazar</Link>
+                      <Link to="/"> 
+                         FarwestTechStore
+                         {/* <img src={logo} alt="logo" className="img-fluid me-2 ms-2" style={{ width: "30px" }} /> */}
+                         </Link>
                     </div>
                   </div>
                   <div className="col-lg-5 mx-auto mt-4 mt-lg-0">
@@ -237,14 +241,14 @@ export const Layout = () => {
                     <div className="row">
                       <div className="col-12">
                         <div className="footer-logo">
-                          <a href="index.html">E-Commerce</a>
+                          <a href="index.html">FarwestTechStore</a>
                         </div>
                       </div>
                       <div className="col-12">
                         <address>
-                          221B Baker Street
+                          Dhangadhi, 13, Mohannpur
                           <br />
-                          London, England
+                          Kailali, Nepal
                         </address>
                       </div>
                       <div className="col-12">
@@ -273,9 +277,7 @@ export const Layout = () => {
                       </div>
                       <div className="col-12 text-justify">
                         <p>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. Integer dignissim neque condimentum lacus
-                          dapibus.
+                          Farwest Tech Store – Your trusted destination for cutting-edge robotics and innovative tech products.
                         </p>
                       </div>
                     </div>
@@ -288,16 +290,16 @@ export const Layout = () => {
                       <div className="col-12">
                         <ul className="footer-nav">
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Arduino UNO</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Motor Driver (L298N)</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Breadboard</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Electronic Speed Controller</a>
                           </li>
                         </ul>
                       </div>
@@ -311,16 +313,16 @@ export const Layout = () => {
                       <div className="col-12">
                         <ul className="footer-nav">
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Ultrasonic Sensor</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">BO Motor (DC Gear Motor)</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Brushless Motor</a>
                           </li>
                           <li>
-                            <a href="#">Our Products</a>
+                            <a href="#">Jumper Wires Set</a>
                           </li>
                         </ul>
                       </div>
